@@ -1,5 +1,11 @@
+using AccountApi.Context;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 {
+    builder.Services.AddDbContext<AppDbContext>(opt =>
+        opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
     builder.Services.AddControllers();
 
     builder.Services.AddEndpointsApiExplorer();
