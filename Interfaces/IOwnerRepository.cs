@@ -2,7 +2,7 @@ using AccountApi.Models;
 
 namespace AccountApi.Interfaces;
 
-public interface IOwnerRepository : IGenericRepository<Owner>
+public interface IOwnerRepository
 {
     Task<IEnumerable<Owner>> GetOwnersAsync();
     Task<Owner> GetOwnerByIdAsync(Guid id);
