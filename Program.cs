@@ -1,10 +1,14 @@
 using AccountApi.Context;
+using AccountApi.Interfaces;
+using AccountApi.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddDbContext<AppDbContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
     builder.Services.AddControllers();
 
