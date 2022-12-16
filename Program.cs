@@ -1,6 +1,8 @@
 using AccountApi.Context;
+using AccountApi.DTOs.Mappings;
 using AccountApi.Interfaces;
 using AccountApi.Repository;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,15 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+
+    var mappingConfig = new MapperConfiguration(mconf =>
+    {
+        mconf.AddProfile(new MappingProfile());
+    });
+
+    IMapper mapper = mappingConfig.CreateMapper();
+
+    builder.Services.AddSingleton(mapper);
 }
 
 var app = builder.Build();
