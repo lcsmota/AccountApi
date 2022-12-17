@@ -25,9 +25,9 @@ public class OwnersController : ControllerBase
         {
             var owners = await _unitOfWork.OwnerRepository.GetOwnersAsync();
 
-            var onwersDtos = _mapper.Map<IEnumerable<OwnerDTO>>(owners);
+            var ownersDtos = _mapper.Map<IEnumerable<OwnerDTO>>(owners);
 
-            return Ok(onwersDtos);
+            return Ok(ownersDtos);
         }
         catch (System.Exception)
         {
@@ -44,9 +44,9 @@ public class OwnersController : ControllerBase
 
             if (owner is null) return NotFound("Owner not found.");
 
-            var onwerDto = _mapper.Map<OwnerDTO>(owner);
+            var ownerDto = _mapper.Map<OwnerDTO>(owner);
 
-            return Ok(onwerDto);
+            return Ok(ownerDto);
         }
         catch (System.Exception)
         {
@@ -63,13 +63,76 @@ public class OwnersController : ControllerBase
 
             if (owner is null) return NotFound("Owner not found.");
 
-            var onwerDto = _mapper.Map<OwnerDTO>(owner);
+            var ownerDto = _mapper.Map<OwnerDTO>(owner);
 
-            return Ok(onwerDto);
+            return Ok(ownerDto);
         }
         catch (System.Exception)
         {
             return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> InsertOwnerAsync(OwnerDTO ownerDTO)
+    {
+        try
+        {
+            if (ownerDTO is null) return BadRequest("Check the field(s) and try again.");
+
+            var ownerDb = _mapper.Map<Owner>(ownerDTO);
+
+            _unitOfWork.OwnerRepository.InsertOwner(ownerDb);
+            await _unitOfWork.CommitAsync();
+
+            var ownerDto = _mapper.Map<OwnerDTO>(ownerDb);
+
+            return CreatedAtRoute("GetOwnerById", new { id = ownerDto.OwnerId }, ownerDto);
+        }
+        catch (System.Exception)
+        {
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult> UpdateOwnerAsync(Guid id, OwnerDTO ownerDTO)
+    {
+        try
+        {
+            if (id != ownerDTO.OwnerId || ownerDTO is null)
+                return BadRequest("Check the field(s) and try again.");
+
+            var ownerDb = _mapper.Map<Owner>(ownerDTO);
+
+            _unitOfWork.OwnerRepository.UpdateOwner(ownerDb);
+            await _unitOfWork.CommitAsync();
+
+            return NoContent();
+        }
+        catch (System.Exception)
+        {
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> DeleteOwnerAsync(Guid id)
+    {
+        try
+        {
+            var ownerDb = await _unitOfWork.OwnerRepository.GetOwnerByIdAsync(id);
+            if (ownerDb is null) return NotFound("Owner not found.");
+
+            _unitOfWork.OwnerRepository.DeleteOwner(ownerDb);
+            await _unitOfWork.CommitAsync();
+
+            return NoContent();
+
+        }
+        catch (System.Exception)
+        {
+            return StatusCode(500, "Internal service error");
         }
     }
 }
