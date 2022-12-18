@@ -4,6 +4,7 @@ using AccountApi.Interfaces;
 using AccountApi.Repository;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -15,7 +16,15 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddControllers();
 
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(sw =>
+    {
+        sw.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "Account API",
+            Version = "v1",
+            Description = "Simple CRUD using Entity Framework 7"
+        });
+    });
 
     var mappingConfig = new MapperConfiguration(mconf =>
     {
