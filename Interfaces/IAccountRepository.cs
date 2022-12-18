@@ -2,7 +2,7 @@ using AccountApi.Models;
 
 namespace AccountApi.Interfaces;
 
-public interface IAccountRepository : IGenericRepository<Account>
+public interface IAccountRepository
 {
     Task<IEnumerable<Account>> GetAccountsAsync();
     Task<Account> GetAccountByIdAsync(Guid id);
