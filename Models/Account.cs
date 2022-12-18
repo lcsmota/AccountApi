@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace AccountApi.Models;
 
 public class Account
@@ -7,5 +9,7 @@ public class Account
     public string? AccountType { get; set; }
 
     public Guid OwnerId { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public Owner? Owner { get; set; }
 }
