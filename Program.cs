@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AccountApi.Context;
 using AccountApi.DTOs.Mappings;
 using AccountApi.Interfaces;
@@ -13,7 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers().AddJsonOptions(options =>
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(sw =>
