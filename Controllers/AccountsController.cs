@@ -51,7 +51,7 @@ public class AccountsController : ControllerBase
 
     }
 
-    [HttpGet("{id:guid}/WithOwner")]
+    [HttpGet("WithOwner/{id:guid}")]
     public async Task<ActionResult> GetAccountsWithOwnerAsync(Guid id)
     {
         try
@@ -82,9 +82,50 @@ public class AccountsController : ControllerBase
 
             return CreatedAtRoute("GetAccountById", new { id = accountDto.AccountId }, accountDto);
         }
-        catch (System.Exception ex)
+        catch (System.Exception)
         {
-            return StatusCode(500, $"Internal Server Error: {ex}");
+            return StatusCode(500, $"Internal Server Error");
+        }
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult> UpdateAccountAsync(Guid id, AccountDTO accountDTO)
+    {
+        try
+        {
+            if (id != accountDTO.AccountId || accountDTO is null)
+                return BadRequest("Check the field(s) and try again.");
+
+            var accountDb = _mapper.Map<Account>(accountDTO);
+
+            _unitOfWork.AccountRepository.UpdateAccount(accountDb);
+            await _unitOfWork.CommitAsync();
+
+            return NoContent();
+        }
+        catch (System.Exception)
+        {
+            return StatusCode(500, $"Internal Server Error");
+        }
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> DeleteAccountAsync(Guid id)
+    {
+        try
+        {
+
+            var accountDb = await _unitOfWork.AccountRepository.GetAccountByIdAsync(id);
+            if (accountDb is null) return NotFound("Account not found.");
+
+            _unitOfWork.AccountRepository.DeleteAccount(accountDb);
+            await _unitOfWork.CommitAsync();
+
+            return NoContent();
+        }
+        catch (System.Exception)
+        {
+            return StatusCode(500, $"Internal Server Error");
         }
     }
 }
