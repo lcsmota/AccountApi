@@ -1,13 +1,15 @@
 using AccountApi.DTOs;
 using AccountApi.Interfaces;
 using AccountApi.Models;
+using AccountApi.Pagination;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace AccountApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 public class AccountsController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -25,7 +27,9 @@ public class AccountsController : ControllerBase
         {
             var accounts = await _unitOfWork.AccountRepository.GetAccountsAsync();
 
-            return Ok(accounts);
+            var accountsDtos = _mapper.Map<IEnumerable<AccountDTO>>(accounts);
+
+            return Ok(accountsDtos);
         }
         catch (System.Exception)
         {
@@ -42,13 +46,44 @@ public class AccountsController : ControllerBase
 
             if (account is null) return NotFound("Account not found.");
 
-            return Ok(account);
+            var accountDto = _mapper.Map<AccountDTO>(account);
+
+            return Ok(accountDto);
         }
         catch (System.Exception)
         {
             return StatusCode(500, "Internal Server Error");
         }
 
+    }
+
+    [HttpGet("WithPagination")]
+    public async Task<ActionResult> GetAccountsWithPaginationAsync([FromQuery] AccountsParameters accountsParameters)
+    {
+        try
+        {
+            var accounts = await _unitOfWork.AccountRepository.GetAccountsWithPagination(accountsParameters);
+
+            var metadata = new
+            {
+                accounts.TotalCount,
+                accounts.CurrentPage,
+                accounts.TotalPages,
+                accounts.PageSize,
+                accounts.HasPrevious,
+                accounts.HasNext
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            var accountsDtos = _mapper.Map<IEnumerable<AccountDTO>>(accounts);
+
+            return Ok(accountsDtos);
+        }
+        catch (System.Exception)
+        {
+            return StatusCode(500, "Internal Server Error");
+        }
     }
 
     [HttpGet("WithOwner/{id:guid}")]
