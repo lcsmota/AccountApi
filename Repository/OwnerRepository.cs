@@ -1,6 +1,7 @@
 using AccountApi.Context;
 using AccountApi.Interfaces;
 using AccountApi.Models;
+using AccountApi.Pagination;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountApi.Repository;
@@ -35,4 +36,12 @@ public class OwnerRepository : GenericRepository<Owner>, IOwnerRepository
 
     public void DeleteOwner(Owner owner)
         => Delete(owner);
+
+    public async Task<IEnumerable<Owner>> GetOwnersWithPaginationAsync(OwnersParameters ownersParameters)
+        =>
+            await GetAll()
+            .OrderBy(e => e.Name)
+            .Skip((ownersParameters.PageNumber - 1) * ownersParameters.PageSize)
+            .Take(ownersParameters.PageSize)
+            .ToListAsync();
 }
