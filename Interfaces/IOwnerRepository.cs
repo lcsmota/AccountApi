@@ -12,5 +12,5 @@ public interface IOwnerRepository
     void UpdateOwner(Owner owner);
     void DeleteOwner(Owner owner);
 
-    Task<IEnumerable<Owner>> GetOwnersWithPaginationAsync(OwnersParameters ownersParameters);
+    Task<PagedList<Owner>> GetOwnersWithPaginationAsync(OwnersParameters ownersParameters);
 }

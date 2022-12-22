@@ -1,6 +1,7 @@
 using AccountApi.Context;
 using AccountApi.Interfaces;
 using AccountApi.Models;
+using AccountApi.Pagination;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountApi.Repository;
@@ -42,4 +43,10 @@ public class AccountRepository : GenericRepository<Account>, IAccountRepository
     public void DeleteAccount(Account account)
         => Delete(account);
 
+    public async Task<PagedList<Account>> GetAccountsWithPagination(AccountsParameters accountParameters)
+        =>
+            await PagedList<Account>.ToPagedList(
+                GetAll().OrderBy(e => e.AccountType),
+                accountParameters.PageNumber,
+                accountParameters.PageSize);
 }

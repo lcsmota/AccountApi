@@ -37,11 +37,10 @@ public class OwnerRepository : GenericRepository<Owner>, IOwnerRepository
     public void DeleteOwner(Owner owner)
         => Delete(owner);
 
-    public async Task<IEnumerable<Owner>> GetOwnersWithPaginationAsync(OwnersParameters ownersParameters)
+    public async Task<PagedList<Owner>> GetOwnersWithPaginationAsync(OwnersParameters ownersParameters)
         =>
-            await GetAll()
-            .OrderBy(e => e.Name)
-            .Skip((ownersParameters.PageNumber - 1) * ownersParameters.PageSize)
-            .Take(ownersParameters.PageSize)
-            .ToListAsync();
+            await PagedList<Owner>.ToPagedList(
+                GetAll().OrderBy(e => e.Name),
+                ownersParameters.PageNumber,
+                ownersParameters.PageSize);
 }

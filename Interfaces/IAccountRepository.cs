@@ -1,4 +1,5 @@
 using AccountApi.Models;
+using AccountApi.Pagination;
 
 namespace AccountApi.Interfaces;
 
@@ -11,4 +12,6 @@ public interface IAccountRepository
     void InsertAccount(Account account);
     void UpdateAccount(Account account);
     void DeleteAccount(Account account);
+
+    Task<PagedList<Account>> GetAccountsWithPagination(AccountsParameters accountParameters);
 }
