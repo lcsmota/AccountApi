@@ -4,6 +4,7 @@ using AccountApi.Models;
 using AccountApi.Pagination;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace AccountApi.Controllers;
 
@@ -36,23 +37,6 @@ public class OwnersController : ControllerBase
         }
     }
 
-    [HttpGet("withpagination")]
-    public async Task<ActionResult> GetAllOwnersAsync([FromQuery] OwnersParameters ownerParameters)
-    {
-        try
-        {
-            var owners = await _unitOfWork.OwnerRepository.GetOwnersWithPaginationAsync(ownerParameters);
-
-            var ownersDtos = _mapper.Map<IEnumerable<OwnerDTO>>(owners);
-
-            return Ok(ownersDtos);
-        }
-        catch (System.Exception)
-        {
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
     [HttpGet("{id:guid}", Name = "GetOwnerById")]
     public async Task<ActionResult> GetOwnerAsync(Guid id)
     {
@@ -65,6 +49,35 @@ public class OwnersController : ControllerBase
             var ownerDto = _mapper.Map<OwnerDTO>(owner);
 
             return Ok(ownerDto);
+        }
+        catch (System.Exception)
+        {
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpGet("WithPagination")]
+    public async Task<ActionResult> GetAllOwnersWithPaginationAsync([FromQuery] OwnersParameters ownerParameters)
+    {
+        try
+        {
+            var owners = await _unitOfWork.OwnerRepository.GetOwnersWithPaginationAsync(ownerParameters);
+
+            var metadata = new
+            {
+                owners.TotalCount,
+                owners.CurrentPage,
+                owners.TotalPages,
+                owners.PageSize,
+                owners.HasPrevious,
+                owners.HasNext
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            var ownersDtos = _mapper.Map<IEnumerable<OwnerDTO>>(owners);
+
+            return Ok(ownersDtos);
         }
         catch (System.Exception)
         {
