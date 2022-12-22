@@ -1,6 +1,7 @@
 using AccountApi.DTOs;
 using AccountApi.Interfaces;
 using AccountApi.Models;
+using AccountApi.Pagination;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,23 @@ public class OwnersController : ControllerBase
         try
         {
             var owners = await _unitOfWork.OwnerRepository.GetOwnersAsync();
+
+            var ownersDtos = _mapper.Map<IEnumerable<OwnerDTO>>(owners);
+
+            return Ok(ownersDtos);
+        }
+        catch (System.Exception)
+        {
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpGet("withpagination")]
+    public async Task<ActionResult> GetAllOwnersAsync([FromQuery] OwnersParameters ownerParameters)
+    {
+        try
+        {
+            var owners = await _unitOfWork.OwnerRepository.GetOwnersWithPaginationAsync(ownerParameters);
 
             var ownersDtos = _mapper.Map<IEnumerable<OwnerDTO>>(owners);
 
