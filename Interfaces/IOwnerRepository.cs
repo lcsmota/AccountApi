@@ -13,4 +13,5 @@ public interface IOwnerRepository
     void DeleteOwner(Owner owner);
 
     Task<PagedList<Owner>> GetOwnersWithPaginationAsync(OwnersParameters ownersParameters);
+    Task<PagedList<Owner>> GetOwnersWithFilteringAsync(OwnersParameters ownersParameters);
 }

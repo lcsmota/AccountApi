@@ -43,4 +43,13 @@ public class OwnerRepository : GenericRepository<Owner>, IOwnerRepository
                 GetAll().OrderBy(e => e.Name),
                 ownersParameters.PageNumber,
                 ownersParameters.PageSize);
+
+    public async Task<PagedList<Owner>> GetOwnersWithFilteringAsync(OwnersParameters ownersParameters)
+    {
+        var owners = GetByCondition(e => e.DateOfBirth.Year >= ownersParameters.MinYearOfBirth &&
+                        e.DateOfBirth.Year <= ownersParameters.MaxYearOfBirth)
+                        .OrderBy(name => name.Name);
+
+        return await PagedList<Owner>.ToPagedList(owners, ownersParameters.PageNumber, ownersParameters.PageSize);
+    }
 }
