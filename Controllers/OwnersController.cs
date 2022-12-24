@@ -85,6 +85,38 @@ public class OwnersController : ControllerBase
         }
     }
 
+    [HttpGet("WithFiltering")]
+    public async Task<ActionResult> GetAllOwnersWithFilteringAsync([FromQuery] OwnersParameters ownerParameters)
+    {
+        try
+        {
+            if (!ownerParameters.ValidYearRange)
+                return BadRequest("Max year of birth can't be less than min year of birth");
+
+            var owners = await _unitOfWork.OwnerRepository.GetOwnersWithFilteringAsync(ownerParameters);
+
+            var metadata = new
+            {
+                owners.TotalCount,
+                owners.CurrentPage,
+                owners.TotalPages,
+                owners.PageSize,
+                owners.HasPrevious,
+                owners.HasNext
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            var ownersDtos = _mapper.Map<IEnumerable<OwnerDTO>>(owners);
+
+            return Ok(ownersDtos);
+        }
+        catch (System.Exception)
+        {
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
     [HttpGet("{id:guid}/WithAccounts")]
     public async Task<ActionResult> GetOwnerWithAccountsAsync(Guid id)
     {
