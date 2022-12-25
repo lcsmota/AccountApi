@@ -14,4 +14,5 @@ public interface IOwnerRepository
 
     Task<PagedList<Owner>> GetOwnersWithPaginationAsync(OwnersParameters ownersParameters);
     Task<PagedList<Owner>> GetOwnersWithFilteringAsync(OwnersParameters ownersParameters);
+    Task<PagedList<Owner>> GetOwnersWithSearchingAsync(OwnersParameters ownersParameters);
 }

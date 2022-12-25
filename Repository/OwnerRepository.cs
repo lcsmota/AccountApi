@@ -52,4 +52,26 @@ public class OwnerRepository : GenericRepository<Owner>, IOwnerRepository
 
         return await PagedList<Owner>.ToPagedList(owners, ownersParameters.PageNumber, ownersParameters.PageSize);
     }
+
+    public async Task<PagedList<Owner>> GetOwnersWithSearchingAsync(OwnersParameters ownersParameters)
+    {
+        var owners = GetByCondition(e =>
+            e.DateOfBirth.Year >= ownersParameters.MinYearOfBirth &&
+            e.DateOfBirth.Year <= ownersParameters.MaxYearOfBirth);
+
+        SearchByName(ref owners, ownersParameters.Name);
+
+        return await PagedList<Owner>.ToPagedList(
+            owners.OrderBy(ow => ow.DateOfBirth),
+            ownersParameters.PageNumber,
+            ownersParameters.PageSize);
+    }
+
+    private void SearchByName(ref IQueryable<Owner> owners, string ownerName)
+    {
+        if (!owners.Any() || string.IsNullOrWhiteSpace(ownerName))
+            return;
+
+        owners = owners.Where(e => e.Name.ToLower().Contains(ownerName.ToLower().Trim()));
+    }
 }
