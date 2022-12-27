@@ -122,6 +122,9 @@ public class OwnersController : ControllerBase
     {
         try
         {
+            if (!ownerParameters.ValidYearRange)
+                return BadRequest("Max year of birth can't be less than min year of birth");
+
             var owners = await _unitOfWork.OwnerRepository.GetOwnersWithSearchingAsync(ownerParameters);
 
             var metadata = new
