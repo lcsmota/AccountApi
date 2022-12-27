@@ -13,5 +13,7 @@ public interface IAccountRepository
     void UpdateAccount(Account account);
     void DeleteAccount(Account account);
 
-    Task<PagedList<Account>> GetAccountsWithPagination(AccountsParameters accountParameters);
+    Task<PagedList<Account>> GetAccountsWithPaginationAsync(AccountsParameters accountParameters);
+    Task<PagedList<Account>> GetAccountsWithFilteringAsync(AccountsParameters accountParameters);
+    Task<PagedList<Account>> GetAccountsWithSearchingAsync(AccountsParameters accountParameters);
 }

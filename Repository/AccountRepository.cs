@@ -43,10 +43,43 @@ public class AccountRepository : GenericRepository<Account>, IAccountRepository
     public void DeleteAccount(Account account)
         => Delete(account);
 
-    public async Task<PagedList<Account>> GetAccountsWithPagination(AccountsParameters accountParameters)
+    public async Task<PagedList<Account>> GetAccountsWithPaginationAsync(AccountsParameters accountParameters)
         =>
             await PagedList<Account>.ToPagedList(
                 GetAll().OrderBy(e => e.AccountType),
                 accountParameters.PageNumber,
                 accountParameters.PageSize);
+
+    public async Task<PagedList<Account>> GetAccountsWithFilteringAsync(AccountsParameters accountParameters)
+    {
+        var accounts = GetByCondition(e => e.DateCreated.Year >= accountParameters.MinDateCreated &&
+                e.DateCreated.Year <= accountParameters.MaxDateCreated).OrderBy(x => x.AccountType);
+
+        return await PagedList<Account>.ToPagedList(
+            accounts,
+            accountParameters.PageNumber,
+            accountParameters.PageSize);
+    }
+
+    public async Task<PagedList<Account>> GetAccountsWithSearchingAsync(AccountsParameters accountParameters)
+    {
+        var accounts = GetByCondition(e =>
+            e.DateCreated.Year >= accountParameters.MinDateCreated &&
+            e.DateCreated.Year <= accountParameters.MaxDateCreated);
+
+        SearchByAccountType(ref accounts, accountParameters.AccountType);
+
+        return await PagedList<Account>.ToPagedList(
+            accounts,
+            accountParameters.PageNumber,
+            accountParameters.PageSize);
+    }
+
+    private void SearchByAccountType(ref IQueryable<Account> accounts, string accountType)
+    {
+        if (!accounts.Any() || string.IsNullOrWhiteSpace(accountType))
+            return;
+
+        accounts = accounts.Where(e => e.AccountType.ToLower().Contains(accountType.ToLower().Trim()));
+    }
 }
