@@ -62,7 +62,71 @@ public class AccountsController : ControllerBase
     {
         try
         {
-            var accounts = await _unitOfWork.AccountRepository.GetAccountsWithPagination(accountsParameters);
+            var accounts = await _unitOfWork.AccountRepository.GetAccountsWithPaginationAsync(accountsParameters);
+
+            var metadata = new
+            {
+                accounts.TotalCount,
+                accounts.CurrentPage,
+                accounts.TotalPages,
+                accounts.PageSize,
+                accounts.HasPrevious,
+                accounts.HasNext
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            var accountsDtos = _mapper.Map<IEnumerable<AccountDTO>>(accounts);
+
+            return Ok(accountsDtos);
+        }
+        catch (System.Exception)
+        {
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+    [HttpGet("WithFiltering")]
+    public async Task<ActionResult> GetAccountsWithFilteringAsync([FromQuery] AccountsParameters accountsParameters)
+    {
+        try
+        {
+            if (!accountsParameters.ValidDateRange)
+                return BadRequest("Min date can't be more than max date");
+
+            var accounts = await _unitOfWork.AccountRepository.GetAccountsWithFilteringAsync(accountsParameters);
+
+            var metadata = new
+            {
+                accounts.TotalCount,
+                accounts.CurrentPage,
+                accounts.TotalPages,
+                accounts.PageSize,
+                accounts.HasPrevious,
+                accounts.HasNext
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            var accountsDtos = _mapper.Map<IEnumerable<AccountDTO>>(accounts);
+
+            return Ok(accountsDtos);
+        }
+        catch (System.Exception)
+        {
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+    [HttpGet("WithSearching")]
+    public async Task<ActionResult> GetAccountsWithSearchingAsync([FromQuery] AccountsParameters accountsParameters)
+    {
+        try
+        {
+            if (!accountsParameters.ValidDateRange)
+                return BadRequest("Min date can't be more than max date");
+
+            var accounts = await _unitOfWork.AccountRepository.GetAccountsWithSearchingAsync(accountsParameters);
 
             var metadata = new
             {
