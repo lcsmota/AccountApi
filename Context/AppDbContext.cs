@@ -56,5 +56,7 @@ public class AppDbContext : IdentityDbContext
                 .HasConstraintName("FK_Accounts_Owner")
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
+        base.OnModelCreating(modelBuilder);
     }
 }
