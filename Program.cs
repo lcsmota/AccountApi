@@ -4,6 +4,7 @@ using AccountApi.DTOs.Mappings;
 using AccountApi.Interfaces;
 using AccountApi.Repository;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -11,6 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddDbContext<AppDbContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+    builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                    .AddEntityFrameworkStores<AppDbContext>()
+                    .AddDefaultTokenProviders();
 
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
