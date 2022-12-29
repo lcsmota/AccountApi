@@ -3,6 +3,8 @@ using AccountApi.Interfaces;
 using AccountApi.Models;
 using AccountApi.Pagination;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -10,6 +12,7 @@ namespace AccountApi.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class AccountsController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
