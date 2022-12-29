@@ -6,5 +6,5 @@ public class OwnersParameters : QueryStringParameters
     public uint MaxYearOfBirth { get; set; } = (uint)DateTime.UtcNow.Year;
     public bool ValidYearRange => MaxYearOfBirth > MinYearOfBirth;
 
-    public string Name { get; set; }
+    public string? Name { get; set; }
 }
