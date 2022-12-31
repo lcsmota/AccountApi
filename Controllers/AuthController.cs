@@ -12,6 +12,7 @@ namespace AccountApi.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
+[Produces("application/json")]
 public class AuthController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
@@ -30,6 +31,8 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("Register")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> RegisterUserAsync(UserDTO userDTO)
     {
         var user = _mapper.Map<IdentityUser>(userDTO);
@@ -45,6 +48,8 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("Login")]
+    [ProducesResponseType(typeof(UserToken), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> LoginAsync(UserDTO userDTO)
     {
         var result = await _signInManager.PasswordSignInAsync(userDTO.Email, userDTO.Password, isPersistent: false, lockoutOnFailure: false);

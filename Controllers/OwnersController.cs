@@ -13,6 +13,8 @@ namespace AccountApi.Controllers;
 [ApiController]
 [Route("api/v1/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Produces("application/json")]
+[ApiConventionType(typeof(DefaultApiConventions))]
 public class OwnersController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;

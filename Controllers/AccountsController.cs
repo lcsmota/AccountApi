@@ -13,6 +13,7 @@ namespace AccountApi.Controllers;
 [ApiController]
 [Route("api/v1/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Produces("application/json")]
 public class AccountsController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -24,6 +25,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpGet]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
     public async Task<ActionResult> GetAccountsAsync()
     {
         try
@@ -41,6 +43,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpGet("{id:guid}", Name = "GetAccountById")]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
     public async Task<ActionResult> GetAccountAsync(Guid id)
     {
         try
@@ -61,6 +64,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpGet("WithPagination")]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
     public async Task<ActionResult> GetAccountsWithPaginationAsync([FromQuery] AccountsParameters accountsParameters)
     {
         try
@@ -90,6 +94,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpGet("WithFiltering")]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
     public async Task<ActionResult> GetAccountsWithFilteringAsync([FromQuery] AccountsParameters accountsParameters)
     {
         try
@@ -122,6 +127,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpGet("WithSearching")]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
     public async Task<ActionResult> GetAccountsWithSearchingAsync([FromQuery] AccountsParameters accountsParameters)
     {
         try
@@ -154,6 +160,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpGet("WithOwner/{id:guid}")]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
     public async Task<ActionResult> GetAccountsWithOwnerAsync(Guid id)
     {
         try
@@ -169,6 +176,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
     public async Task<ActionResult> InsertAccountAsync(AccountDTO accountDTO)
     {
         try
@@ -191,6 +199,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
     public async Task<ActionResult> UpdateAccountAsync(Guid id, AccountDTO accountDTO)
     {
         try
@@ -212,6 +221,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
     public async Task<ActionResult> DeleteAccountAsync(Guid id)
     {
         try
