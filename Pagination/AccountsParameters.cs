@@ -7,5 +7,5 @@ public class AccountsParameters : QueryStringParameters
 
     public bool ValidDateRange => MinDateCreated < MaxDateCreated;
 
-    public string AccountType { get; set; }
+    public string? AccountType { get; set; }
 }
